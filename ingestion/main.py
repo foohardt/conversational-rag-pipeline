@@ -18,9 +18,6 @@ from langchain.schema.messages import AIMessage, HumanMessage
 from colorama import Fore, Back, Style
 from sitemap import parse_urls
 
-# getpass.getpass()
-os.environ["OPENAI_API_KEY"] = "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"
-
 urls = parse_urls()
 print("URLs Length:", len(urls))
 
@@ -57,11 +54,6 @@ vectorstore = Chroma.from_documents(
     documents=splits, embedding=OpenAIEmbeddings())
 retriever = vectorstore.as_retriever()
 
-""" retrieved_docs = retriever.get_relevant_documents(
-    "What are the approaches to Task Decomposition?"
-)
-print("Length Retrived Docs", len(retrieved_docs))
- """
 prompt = hub.pull("rlm/rag-prompt")
 llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
 
@@ -102,12 +94,6 @@ rag_chain_with_source = RunnableMap(
     "answer": rag_chain_from_docs,
 }
 
-""" print("Was ist ein Ankunftszentrum?", rag_chain.invoke("Was ist ein Ankunftszentrum?"))
-print("Wie koche ich Hühnersuppe?", rag_chain.invoke("Wie koche ich Hühnersuppe?"))
-print("Wie kann ich mein Auto anmelden?", rag_chain.invoke("Wie koche ich Hühnersuppe?"))
-
-print("With Source: Ich bin in Berlin. Wo ist das Ankunftszentrum?", rag_chain_with_source.invoke("Ich bin in Berlin. Wo ist das Ankunftszentrum?")) """
-
 condense_q_system_prompt = """Given a chat history and the latest user question \
 which might reference the chat history, formulate a standalone question \
 which can be understood without the chat history. Do NOT answer the question, \
@@ -120,27 +106,6 @@ condense_q_prompt = ChatPromptTemplate.from_messages(
     ]
 )
 condense_q_chain = condense_q_prompt | llm | StrOutputParser()
-
-""" condense_q_chain.invoke(
-    {
-        "chat_history": [
-            HumanMessage(content="What does LLM stand for?"),
-            AIMessage(content="Large language model"),
-        ],
-        "question": "What is meant by large",
-    }
-)
-
-condense_q_chain.invoke(
-    {
-        "chat_history": [
-            HumanMessage(content="What does LLM stand for?"),
-            AIMessage(content="Large language model"),
-        ],
-        "question": "How do transformers work",
-    }
-)
- """
 
 qa_system_prompt = """You are an assistant for question-answering tasks. \
 Use the following pieces of retrieved context to answer the question. \
@@ -173,16 +138,10 @@ rag_chain = (
 
 chat_history = []
 
-""" question = "What is Task Decomposition?"
+print("Local Conversational RAG Pipeline. Type 'exit', to exit application.")
 
-ai_msg = rag_chain.invoke({"question": question, "chat_history": chat_history})
-chat_history.extend([HumanMessage(content=question), ai_msg])
-
-second_question = "What are common ways of doing it?"
-rag_chain.invoke({"question": second_question, "chat_history": chat_history}) """
-
-print("Local AuthoriChat. Type 'exit', to exit application.")
 user_input = ''
+
 while user_input != 'exit':
     user_input = input(Fore.BLUE + "Enter Question: ")
     ai_msg = rag_chain.invoke(
@@ -191,19 +150,3 @@ while user_input != 'exit':
     chat_history.extend([HumanMessage(content=user_input), ai_msg])
 
 vectorstore.delete_collection()
-
-'''
-def main():
-    url = input("Enter URL: ")
-
-    text_content = utils.parse_html_to_text(url)
-
-    if text_content:
-        print(text_content)
-    else:
-        print("Error: Unable to parse API documentation")
-'''
-
-""" if __name__ == '__main__':
-    main()
- """
