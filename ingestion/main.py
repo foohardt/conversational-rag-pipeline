@@ -18,8 +18,6 @@ from langchain.schema.messages import AIMessage, HumanMessage
 from colorama import Fore, Back, Style
 from sitemap import parse_urls
 
-os.environ["OPENAI_API_KEY"] = "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"
-
 urls = parse_urls()
 print("URLs Length:", len(urls))
 
